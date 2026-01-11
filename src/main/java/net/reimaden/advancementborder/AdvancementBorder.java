@@ -70,15 +70,15 @@ public final class AdvancementBorder implements ModInitializer {
     }
 
     public static void sendNotification(PlayerList playerList, String key, Object... args) {
-        if (switch (config.notificationStyle) {
-            case CHAT, ACTION_BAR -> true;
-            case NONE -> false;
-        }) {
-            int color = Integer.parseInt(config.notificationColor.substring(1), 16);
-            playerList.broadcastSystemMessage(
-                    Component.translatable(AdvancementBorder.MOD_ID + key, args).withColor(color),
-                    config.notificationStyle.equals(AdvancementBorderConfig.NotificationStyle.ACTION_BAR)
-            );
+        switch (config.notificationStyle) {
+            case CHAT, ACTION_BAR -> {
+                int color = Integer.parseInt(config.notificationColor.substring(1), 16);
+                playerList.broadcastSystemMessage(
+                        Component.translatable(AdvancementBorder.MOD_ID + key, args).withColor(color),
+                        config.notificationStyle.equals(AdvancementBorderConfig.NotificationStyle.ACTION_BAR)
+                );
+            }
+            case NONE -> {}
         }
     }
 }
