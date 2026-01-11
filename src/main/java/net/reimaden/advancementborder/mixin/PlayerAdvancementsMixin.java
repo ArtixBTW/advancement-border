@@ -21,7 +21,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 @Mixin(PlayerAdvancements.class)
 public abstract class PlayerAdvancementsMixin {
@@ -63,15 +66,24 @@ public abstract class PlayerAdvancementsMixin {
         MinecraftServer server = this.player.getServer();
         if (server == null) return;
 
+        UUID uuid = player.getUUID();
+
         StateSaverAndLoader serverState = StateSaverAndLoader.getServerState(server);
 
+        Set<UUID> playersWithAdvancement = serverState.completedAdvancements.get(advancement);
+        if (playersWithAdvancement == null) {
+            serverState.completedAdvancements.put(advancement, new HashSet<>());
+            playersWithAdvancement = serverState.completedAdvancements.get(advancement);
+        }
+
         boolean shouldExpand = AdvancementBorder.config.perPlayerAdvancements
-            || !serverState.completedAdvancements.contains(advancement);
+            && !playersWithAdvancement.contains(uuid)
+            || playersWithAdvancement.size() == 0;
 
         if (!shouldExpand) return;
 
-        boolean completedAdvancementmentsChanged = serverState.completedAdvancements.add(advancement);
-        if (completedAdvancementmentsChanged) {
+        boolean isAdvancementNewToPlayer = playersWithAdvancement.add(uuid);
+        if (isAdvancementNewToPlayer) {
             serverState.setDirty();
         }
 
