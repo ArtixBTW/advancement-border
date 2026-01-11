@@ -64,14 +64,14 @@ public abstract class PlayerAdvancementsMixin {
         if (server == null) return;
 
         StateSaverAndLoader serverState = StateSaverAndLoader.getServerState(server);
-        boolean shouldAdd = true;
-        if (serverState.completedAdvancements.contains(advancement)) {
-            shouldAdd = false;
-            if (!AdvancementBorder.config.perPlayerAdvancements) return;
-        }
 
-        if (shouldAdd) {
-            serverState.completedAdvancements.add(advancement);
+        boolean shouldExpand = AdvancementBorder.config.perPlayerAdvancements
+            || !serverState.completedAdvancements.contains(advancement);
+
+        if (!shouldExpand) return;
+
+        boolean completedAdvancementmentsChanged = serverState.completedAdvancements.add(advancement);
+        if (completedAdvancementmentsChanged) {
             serverState.setDirty();
         }
 
