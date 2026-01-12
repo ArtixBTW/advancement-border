@@ -1,85 +1,61 @@
 package net.reimaden.advancementborder;
 
-import net.fabricmc.fabric.api.tag.convention.v2.TagUtil;
-import net.minecraft.core.HolderLookup;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.UUID;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.IntArrayTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.minecraft.world.level.storage.DimensionDataStorage;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 public final class StateSaverAndLoader extends SavedData {
     private static final String ADVANCEMENTS_KEY = "completedAdvancements";
     private static final String FRESH_WORLD_KEY = "isFreshWorld";
-    public Map<ResourceLocation, Set<UUID>> completedAdvancements = new HashMap<>();
-    public boolean isFreshWorld = true;
 
-    @Override
-    public @NotNull CompoundTag save(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        CompoundTag advancementsTag = new CompoundTag();
-        completedAdvancements.forEach((advancement, uuids) -> {
-            ListTag uuidsTag = new ListTag();
-            for (UUID uuid : uuids) {
-                uuidsTag.add(new IntArrayTag(UUIDUtil.uuidToIntArray(uuid)));
-            }
+    public final HashMap<Identifier, Set<UUID>> completedAdvancements;
+    public boolean isFreshWorld;
 
-            advancementsTag.put(advancement.toString(), uuidsTag);
-        });
-        nbt.put(ADVANCEMENTS_KEY, advancementsTag);
-        nbt.putBoolean(FRESH_WORLD_KEY, isFreshWorld);
-        return nbt;
+    public StateSaverAndLoader() {
+        this(new HashMap<>(), true);
     }
 
-    private static StateSaverAndLoader createFromNbt(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        StateSaverAndLoader state = new StateSaverAndLoader();
-
-        CompoundTag advancementsTag = nbt.getCompound(ADVANCEMENTS_KEY);
-        for (String location : advancementsTag.getAllKeys()) {
-            ResourceLocation id = ResourceLocation.parse(location);
-
-            Set<UUID> uuids = new HashSet<>();
-            state.completedAdvancements.put(id, uuids);
-
-            ListTag uuidsTag = advancementsTag.getList(location, Tag.TAG_INT_ARRAY);
-            uuidsTag.forEach(u -> {
-                IntArrayTag tag = (IntArrayTag) u;
-                // Int-array represtation of a UUID
-                // See https://minecraft.wiki/w/UUID
-                UUID uuid = UUIDUtil.uuidFromIntArray(new int[] {
-                    tag.get(0).getAsInt(),
-                    tag.get(1).getAsInt(),
-                    tag.get(2).getAsInt(),
-                    tag.get(3).getAsInt(),
-                });
-                uuids.add(uuid);
-            });
-        }
-        state.isFreshWorld = nbt.getBoolean(FRESH_WORLD_KEY);
-        return state;
+    public StateSaverAndLoader(HashMap<Identifier, Set<UUID>> completedAdvancements, Boolean isFreshWorld) {
+        this.completedAdvancements = completedAdvancements;
+        this.isFreshWorld = isFreshWorld;
     }
 
-    private static final Factory<StateSaverAndLoader> TYPE = new Factory<>(
+    private static final Codec<StateSaverAndLoader> CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                    // https://docs.fabricmc.net/develop/codecs#serializing-and-deserializing
+                    // https://docs.neoforged.net/docs/datastorage/codecs/
+                    // https://docs.neoforged.net/docs/networking/streamcodecs/
+                    Codec.unboundedMap(Identifier.CODEC, UUIDUtil.CODEC_SET)
+                            // make the unbounded map mutable
+                            .xmap(HashMap::new, self -> self)
+                            .fieldOf(ADVANCEMENTS_KEY)
+                            .forGetter(state -> state.completedAdvancements),
+                    Codec.BOOL.fieldOf(FRESH_WORLD_KEY).forGetter(state -> state.isFreshWorld))
+                    .apply(instance, StateSaverAndLoader::new));
+
+    private static final SavedDataType<StateSaverAndLoader> TYPE = new SavedDataType<>(
+            AdvancementBorder.MOD_ID,
             StateSaverAndLoader::new,
-            StateSaverAndLoader::createFromNbt,
-            null
-    );
+            CODEC,
+            null);
 
     public static StateSaverAndLoader getServerState(MinecraftServer server) {
-        ServerLevel world = server.overworld();
-        DimensionDataStorage manager = world.getDataStorage();
-        return manager.computeIfAbsent(TYPE, AdvancementBorder.MOD_ID);
+        // TODO: check dimensions support in 1.21.9+
+        ServerLevel level = server.overworld();
+        assert level != null;
+
+        DimensionDataStorage manager = level.getDataStorage();
+        return manager.computeIfAbsent(TYPE);
     }
 }

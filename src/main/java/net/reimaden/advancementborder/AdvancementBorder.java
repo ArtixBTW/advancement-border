@@ -50,7 +50,8 @@ public final class AdvancementBorder implements ModInitializer {
             double initialSize = config.worldBorderSetup.initialSize;
             border.setSize(initialSize);
             // Center on world spawn, with a 0.5 offset if the size is odd
-            BlockPos pos = level.getLevelData().getSpawnPos(); // Level#getSharedSpawnPos always puts it at 0,0 for some reason
+            // TODO: multi-dimension stuff
+            BlockPos pos = level.getLevelData().getRespawnData().pos(); // Level#getSharedSpawnPos always puts it at 0,0 for some reason
             double centerX = pos.getX();
             double centerZ = pos.getZ();
             if (initialSize % 2 != 0) { // Check if size is odd
