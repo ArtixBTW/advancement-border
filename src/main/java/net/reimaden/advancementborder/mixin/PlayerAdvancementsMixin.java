@@ -1,8 +1,19 @@
 package net.reimaden.advancementborder.mixin;
 
+import java.util.Arrays;
+import java.util.Optional;
+
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalDoubleRef;
+
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.resources.Identifier;
@@ -13,18 +24,6 @@ import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.level.border.WorldBorder;
 import net.reimaden.advancementborder.AdvancementBorder;
 import net.reimaden.advancementborder.StateSaverAndLoader;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 
 @Mixin(PlayerAdvancements.class)
 public abstract class PlayerAdvancementsMixin {
@@ -64,28 +63,17 @@ public abstract class PlayerAdvancementsMixin {
         }
 
         MinecraftServer server = this.player.level().getServer();
-        if (server == null) return;
-
-        UUID uuid = player.getUUID();
+        assert server != null;
 
         StateSaverAndLoader serverState = StateSaverAndLoader.getServerState(server);
 
-        Set<UUID> playersWithAdvancement = serverState.completedAdvancements.get(advancement);
-        if (playersWithAdvancement == null) {
-            serverState.completedAdvancements.put(advancement, new HashSet<>());
-            playersWithAdvancement = serverState.completedAdvancements.get(advancement);
-        }
+        boolean isNewAdvancement = serverState.completedAdvancements.add(advancement);
+        if (isNewAdvancement) serverState.setDirty();
 
-        boolean shouldExpand = AdvancementBorder.config.perPlayerAdvancements
-            && !playersWithAdvancement.contains(uuid)
-            || playersWithAdvancement.size() == 0;
+        // If perPlayerAdvancements then any advancement being awarded is new
+        boolean shouldExpand = AdvancementBorder.config.perPlayerAdvancements || isNewAdvancement;
 
         if (!shouldExpand) return;
-
-        boolean isAdvancementNewToPlayer = playersWithAdvancement.add(uuid);
-        if (isAdvancementNewToPlayer) {
-            serverState.setDirty();
-        }
 
         double increase = switch (displayInfo.get().getType()) {
             case TASK -> AdvancementBorder.config.increaseAmountTask;

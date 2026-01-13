@@ -1,13 +1,11 @@
 package net.reimaden.advancementborder;
 
-import java.util.HashMap;
-import java.util.Set;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.core.UUIDUtil;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -18,13 +16,13 @@ import net.minecraft.world.level.storage.DimensionDataStorage;
 public final class StateSaverAndLoader extends SavedData {
     private static final String ADVANCEMENTS_KEY = "completedAdvancements";
 
-    public final HashMap<Identifier, Set<UUID>> completedAdvancements;
+    public final HashSet<Identifier> completedAdvancements;
 
     public StateSaverAndLoader() {
-        this(new HashMap<>());
+        this(new HashSet<>());
     }
 
-    public StateSaverAndLoader(HashMap<Identifier, Set<UUID>> completedAdvancements) {
+    public StateSaverAndLoader(HashSet<Identifier> completedAdvancements) {
         this.completedAdvancements = completedAdvancements;
     }
 
@@ -33,9 +31,9 @@ public final class StateSaverAndLoader extends SavedData {
                     // https://docs.fabricmc.net/develop/codecs#serializing-and-deserializing
                     // https://docs.neoforged.net/docs/datastorage/codecs/
                     // https://docs.neoforged.net/docs/networking/streamcodecs/
-                    Codec.unboundedMap(Identifier.CODEC, UUIDUtil.CODEC_SET)
-                            // make the unbounded map mutable
-                            .xmap(HashMap::new, self -> self)
+                    Identifier.CODEC.listOf()
+                            // make into a (mutable) set
+                            .xmap(HashSet::new, ArrayList::new)
                             .fieldOf(ADVANCEMENTS_KEY)
                             .forGetter(state -> state.completedAdvancements))
                     .apply(instance, StateSaverAndLoader::new));
