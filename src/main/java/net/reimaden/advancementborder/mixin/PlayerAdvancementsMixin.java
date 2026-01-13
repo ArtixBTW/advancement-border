@@ -113,10 +113,7 @@ public abstract class PlayerAdvancementsMixin {
     private void advancementborder$announceChat(AdvancementHolder holder, String criterion, CallbackInfoReturnable<Boolean> cir,
                                                 @Share("announceChat") LocalBooleanRef booleanRef, @Share("increase") LocalDoubleRef doubleRef) {
         if (booleanRef.get()) {
-            String translationKey = !AdvancementBorder.config.detailedNotifications
-                    ? ".expand_basic"
-                    : ".expand_detailed";
-            AdvancementBorder.sendNotification(this.playerList, translationKey, doubleRef.get());
+            AdvancementBorder.sendExpansionNotification(this.playerList, doubleRef.get());
         }
     }
 }

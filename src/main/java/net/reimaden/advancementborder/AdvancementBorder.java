@@ -70,12 +70,16 @@ public final class AdvancementBorder implements ModInitializer {
         }
     }
 
-    public static void sendNotification(PlayerList playerList, String key, Object... args) {
+    public static void sendExpansionNotification(PlayerList playerList, Object... translatableArgs) {
         switch (config.notificationStyle) {
             case CHAT, ACTION_BAR -> {
+                String translationKey = AdvancementBorder.config.detailedNotifications
+                        ? ".expand_detailed"
+                        : ".expand_basic";
+
                 int color = Integer.parseInt(config.notificationColor.substring(1), 16);
                 playerList.broadcastSystemMessage(
-                        Component.translatable(AdvancementBorder.MOD_ID + key, args).withColor(color),
+                        Component.translatable(AdvancementBorder.MOD_ID + translationKey, translatableArgs).withColor(color),
                         config.notificationStyle.equals(AdvancementBorderConfig.NotificationStyle.ACTION_BAR)
                 );
             }
