@@ -54,18 +54,4 @@ public final class AdvancementBorderConfig {
     @Configurable
     @Configurable.Comment(value = "Make the whitelist act as a blacklist, preventing the advancements in it from expanding the world border", localize = true)
     public boolean invertList = false;
-
-    @Configurable
-    public WorldBorderSetup worldBorderSetup = new WorldBorderSetup();
-
-    public static class WorldBorderSetup {
-        @Configurable(key = Configurable.LocalizationKey.FULL)
-        @Configurable.Comment(value = {"Let " + AdvancementBorder.MOD_NAME + " handle setting up the world border for new worlds", "This sets the size of the world border and centers it on the world spawn"}, localize = true)
-        public boolean automate = false;
-
-        @Configurable(key = Configurable.LocalizationKey.FULL)
-        @Configurable.Comment(value = "The initial size of the world border", localize = true)
-        @Configurable.DecimalRange(min = 1.0, max = 59999968.0)
-        public double initialSize = 10.0;
-    }
 }

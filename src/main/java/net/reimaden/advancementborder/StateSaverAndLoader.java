@@ -17,18 +17,15 @@ import net.minecraft.world.level.storage.DimensionDataStorage;
 
 public final class StateSaverAndLoader extends SavedData {
     private static final String ADVANCEMENTS_KEY = "completedAdvancements";
-    private static final String FRESH_WORLD_KEY = "isFreshWorld";
 
     public final HashMap<Identifier, Set<UUID>> completedAdvancements;
-    public boolean isFreshWorld;
 
     public StateSaverAndLoader() {
-        this(new HashMap<>(), true);
+        this(new HashMap<>());
     }
 
-    public StateSaverAndLoader(HashMap<Identifier, Set<UUID>> completedAdvancements, Boolean isFreshWorld) {
+    public StateSaverAndLoader(HashMap<Identifier, Set<UUID>> completedAdvancements) {
         this.completedAdvancements = completedAdvancements;
-        this.isFreshWorld = isFreshWorld;
     }
 
     private static final Codec<StateSaverAndLoader> CODEC = RecordCodecBuilder.create(
@@ -40,8 +37,7 @@ public final class StateSaverAndLoader extends SavedData {
                             // make the unbounded map mutable
                             .xmap(HashMap::new, self -> self)
                             .fieldOf(ADVANCEMENTS_KEY)
-                            .forGetter(state -> state.completedAdvancements),
-                    Codec.BOOL.fieldOf(FRESH_WORLD_KEY).forGetter(state -> state.isFreshWorld))
+                            .forGetter(state -> state.completedAdvancements))
                     .apply(instance, StateSaverAndLoader::new));
 
     private static final SavedDataType<StateSaverAndLoader> TYPE = new SavedDataType<>(
