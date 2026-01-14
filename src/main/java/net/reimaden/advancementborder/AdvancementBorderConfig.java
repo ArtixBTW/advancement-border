@@ -8,17 +8,17 @@ import org.jetbrains.annotations.NotNull;
 public final class AdvancementBorderConfig {
     @Configurable
     @Configurable.Comment(value = "How much the world border should expand with each task advancement", localize = true)
-    @Configurable.DecimalRange(min = 0.0, max = 1000.0)
+    @Configurable.DecimalRange(min = -1000.0, max = 1000.0)
     public double increaseAmountTask = 2.0;
 
     @Configurable
     @Configurable.Comment(value = "How much the world border should expand with each goal advancement", localize = true)
-    @Configurable.DecimalRange(min = 0.0, max = 1000.0)
+    @Configurable.DecimalRange(min = -1000.0, max = 1000.0)
     public double increaseAmountGoal = 2.0;
 
     @Configurable
     @Configurable.Comment(value = "How much the world border should expand with each challenge advancement", localize = true)
-    @Configurable.DecimalRange(min = 0.0, max = 1000.0)
+    @Configurable.DecimalRange(min = -1000.0, max = 1000.0)
     public double increaseAmountChallenge = 2.0;
 
     public enum NotificationStyle {

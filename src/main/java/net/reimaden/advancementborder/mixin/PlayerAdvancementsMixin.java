@@ -80,11 +80,12 @@ public abstract class PlayerAdvancementsMixin {
             case GOAL -> AdvancementBorder.config.increaseAmountGoal;
             case CHALLENGE -> AdvancementBorder.config.increaseAmountChallenge;
         };
-        if (increase <= 0) return;
 
         // Setting the border in the Nether or the End doesn't work
         WorldBorder border = server.overworld().getWorldBorder();
-        border.setSize(border.getSize() + increase);
+
+        // Ensure the world border doesn't go too small, crash the game, and break the world
+        border.setSize(Math.max(1.0, border.getSize() + increase));
 
         booleanRef.set(true);
         doubleRef.set(increase);
