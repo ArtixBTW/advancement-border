@@ -48,19 +48,19 @@ public abstract class PlayerAdvancementsMixin {
         }
 
         Identifier advancement = holder.id();
-        String[] advancements = AdvancementBorder.config.advancementWhitelist;
-        // If the whitelist is not empty, check if the awarded advancement is in the whitelist
-        if (advancements.length > 0) {
-            if (!AdvancementBorder.config.invertList) {
-                if (Arrays.stream(advancements).noneMatch(resourceLocation -> Identifier.parse(resourceLocation).equals(advancement))) {
-                    return; // Return early since the awarded advancement is not whitelisted
-                }
-            } else {
-                if (Arrays.stream(advancements).anyMatch(resourceLocation -> Identifier.parse(resourceLocation).equals(advancement))) {
-                    return; // Return early since the awarded advancement is blacklisted
-                }
-            }
-        }
+        // String[] advancements = AdvancementBorder.config.advancementWhitelist;
+        // // If the whitelist is not empty, check if the awarded advancement is in the whitelist
+        // if (advancements.length > 0) {
+        //     if (!AdvancementBorder.config.invertList) {
+        //         if (Arrays.stream(advancements).noneMatch(resourceLocation -> Identifier.parse(resourceLocation).equals(advancement))) {
+        //             return; // Return early since the awarded advancement is not whitelisted
+        //         }
+        //     } else {
+        //         if (Arrays.stream(advancements).anyMatch(resourceLocation -> Identifier.parse(resourceLocation).equals(advancement))) {
+        //             return; // Return early since the awarded advancement is blacklisted
+        //         }
+        //     }
+        // }
 
         MinecraftServer server = this.player.level().getServer();
         assert server != null;
@@ -71,15 +71,17 @@ public abstract class PlayerAdvancementsMixin {
         if (isNewAdvancement) serverState.setDirty();
 
         // If perPlayerAdvancements then any advancement being awarded is new
-        boolean shouldExpand = AdvancementBorder.config.perPlayerAdvancements || isNewAdvancement;
+        // boolean shouldExpand = AdvancementBorder.config.perPlayerAdvancements || isNewAdvancement;
+        boolean shouldExpand = false;
 
         if (!shouldExpand) return;
 
-        double increase = switch (displayInfo.get().getType()) {
-            case TASK -> AdvancementBorder.config.increaseAmountTask;
-            case GOAL -> AdvancementBorder.config.increaseAmountGoal;
-            case CHALLENGE -> AdvancementBorder.config.increaseAmountChallenge;
-        };
+        // double increase = switch (displayInfo.get().getType()) {
+        //     case TASK -> AdvancementBorder.config.increaseAmountTask;
+        //     case GOAL -> AdvancementBorder.config.increaseAmountGoal;
+        //     case CHALLENGE -> AdvancementBorder.config.increaseAmountChallenge;
+        // };
+        double increase = 0;
 
         // Setting the border in the Nether or the End doesn't work
         WorldBorder border = server.overworld().getWorldBorder();
