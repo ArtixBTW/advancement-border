@@ -3,7 +3,11 @@ package net.reimaden.advancementborder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.wispforest.endec.Endec;
+import io.wispforest.endec.impl.ReflectiveEndecBuilder;
+import io.wispforest.owo.network.OwoNetChannel;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.players.PlayerList;
 
 public final class AdvancementBorder implements ModInitializer {
@@ -14,8 +18,6 @@ public final class AdvancementBorder implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        // ConfigHolder<AdvancementBorderConfig> configHolder = Configuration.registerConfig(AdvancementBorderConfig.class, ConfigFormats.YAML);
-        // config = configHolder.getConfigInstance();
     }
 
     public static void sendExpansionNotification(PlayerList playerList, Object... translatableArgs) {

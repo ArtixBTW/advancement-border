@@ -43,3 +43,4 @@ replay_*.log
 .direnv
 flake.nix
 flake.lock
+.factorypath
