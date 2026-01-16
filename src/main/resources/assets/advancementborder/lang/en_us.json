@@ -28,9 +28,5 @@
   "config.advancementborder.option.worldBorderSetup.automate.comment.0": "Let Advancement Border handle setting up the world border for new worlds",
   "config.advancementborder.option.worldBorderSetup.automate.comment.1": "This sets the size of the world border and centers it on the world spawn",
   "config.advancementborder.option.worldBorderSetup.initialSize": "Initial Size",
-  "config.advancementborder.option.worldBorderSetup.initialSize.comment.0": "The initial size of the world border",
-  "text.config.advancement-border.option.notificationStyle.value.chat": "Chat",
-  "text.config.advancement-border.option.notificationStyle.value.action_bar": "Action Bar",
-  "text.config.advancement-border.option.notificationStyle.value.none": "None"
+  "config.advancementborder.option.worldBorderSetup.initialSize.comment.0": "The initial size of the world border"
 }
-

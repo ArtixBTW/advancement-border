@@ -16,10 +16,8 @@ repositories {
         url 'https://maven.nucleoid.xyz'
     }
     maven {
-        url "https://maven.wispforest.io/releases/"
-    }
-    maven {
-        url "https://jitpack.io"
+        name = "FzzyMaven"
+        url = "https://maven.fzzyhmstrs.me/"
     }
     maven {
         name = "Terraformers"
@@ -46,10 +44,8 @@ dependencies {
     // https://github.com/NucleoidMC/Server-Translations
     modImplementation include("xyz.nucleoid:server-translations-api:${project.server_translations_version}")
 
-    // https://docs.wispforest.io/owo/
-    modImplementation "io.wispforest:owo-lib:${project.owo_version}"
-    annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}")
-    include "io.wispforest:owo-sentinel:${project.owo_version}"
+    // https://github.com/fzzyhmstrs/fconfig/
+    modImplementation("me.fzzyhmstrs:fzzy_config:$fzzy_config_version")
 }
 
 processResources {
