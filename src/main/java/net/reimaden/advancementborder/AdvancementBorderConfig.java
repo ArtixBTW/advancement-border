@@ -1,8 +1,8 @@
 package net.reimaden.advancementborder;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import me.fzzyhmstrs.fzzy_config.api.FileType;
 import me.fzzyhmstrs.fzzy_config.api.SaveType;
@@ -37,8 +37,8 @@ public final class AdvancementBorderConfig extends Config {
 
     public static class AdvancementsConfig implements Walkable {
         /**
-         * Whether each player contributes separately instead of using a global list of
-         * advancements
+         * Whether each player contributes separately
+         * instead of using a global list of advancements
          */
         public boolean perPlayer = false;
 
@@ -47,7 +47,7 @@ public final class AdvancementBorderConfig extends Config {
         public static class BlacklistConfig implements Walkable {
             public boolean invert = false;
 
-            public List<Identifier> advancements = new ArrayList<>();
+            public Set<Identifier> advancements = new HashSet<>();
         }
     }
 

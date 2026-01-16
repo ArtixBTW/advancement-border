@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import me.fzzyhmstrs.fzzy_config.api.ConfigApiJava;
 import me.fzzyhmstrs.fzzy_config.api.RegisterType;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.players.PlayerList;
 
 public final class AdvancementBorder implements ModInitializer {
@@ -22,19 +23,19 @@ public final class AdvancementBorder implements ModInitializer {
     }
 
     public static void sendExpansionNotification(PlayerList playerList, Object... translatableArgs) {
-        // switch (config.notificationStyle) {
-        //     case CHAT, ACTION_BAR -> {
-        //         String translationKey = AdvancementBorder.config.detailedNotifications
-        //                 ? ".expand_detailed"
-        //                 : ".expand_basic";
-        //
-        //         int color = Integer.parseInt(config.notificationColor.substring(1), 16);
-        //         playerList.broadcastSystemMessage(
-        //                 Component.translatable(AdvancementBorder.MOD_ID + translationKey, translatableArgs).withColor(color),
-        //                 config.notificationStyle.equals(AdvancementBorderConfig.NotificationStyle.ACTION_BAR)
-        //         );
-        //     }
-        //     case NONE -> {}
-        // }
+        switch (config.expansionNotification.location) {
+            case CHAT, ACTION_BAR -> {
+                String translationKey = AdvancementBorder.config.expansionNotification.showAmountOfBlocks
+                        ? ".expand_detailed"
+                        : ".expand_basic";
+
+                int color = config.expansionNotification.textColor.get().argb();
+                playerList.broadcastSystemMessage(
+                        Component.translatable(AdvancementBorder.MOD_ID + translationKey, translatableArgs).withColor(color),
+                        config.expansionNotification.location.equals(AdvancementBorderConfig.NotificationLocation.ACTION_BAR)
+                );
+            }
+            case NONE -> {}
+        }
     }
 }
