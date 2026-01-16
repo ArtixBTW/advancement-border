@@ -79,7 +79,7 @@ public abstract class PlayerAdvancementsMixin {
             ResourceKey<Level> dimension = level.dimension();
             Identifier id = dimension.identifier();
 
-            DimensionConfig config = AdvancementBorder.config.dimensions.dimensions.getOrDefault(
+            DimensionConfig config = AdvancementBorder.config.dimensions.configured.getOrDefault(
                     id,
                     AdvancementBorder.config.dimensions.fallback);
 

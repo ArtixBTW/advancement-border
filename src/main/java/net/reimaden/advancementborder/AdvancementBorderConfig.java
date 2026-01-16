@@ -75,7 +75,7 @@ public final class AdvancementBorderConfig extends Config {
     public static class DimensionConfigs implements Walkable {
         public DimensionConfig fallback = new DimensionConfig();
 
-        public ValidatedIdentifierMap<DimensionConfig> dimensions = new ValidatedIdentifierMap.Builder<DimensionConfig>()
+        public ValidatedIdentifierMap<DimensionConfig> configured = new ValidatedIdentifierMap.Builder<DimensionConfig>()
                 .keyHandler(new ValidatedIdentifier(Identifier.withDefaultNamespace("overworld")))
                 .valueHandler(new ValidatedAny<DimensionConfig>(new DimensionConfig()))
                 .build();
