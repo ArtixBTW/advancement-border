@@ -35,7 +35,7 @@ public final class AdvancementBorder implements ModInitializer {
                         config.expansionNotification.location.equals(AdvancementBorderConfig.NotificationLocation.ACTION_BAR)
                 );
             }
-            case NONE -> {}
+            case DISABLED -> {}
         }
     }
 }
