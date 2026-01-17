@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import me.fzzyhmstrs.fzzy_config.api.ConfigApiJava;
 import me.fzzyhmstrs.fzzy_config.api.RegisterType;
+import me.fzzyhmstrs.fzzy_config.validation.misc.ValidatedColor;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.players.PlayerList;
@@ -22,18 +23,13 @@ public final class AdvancementBorder implements ModInitializer {
     public void onInitialize() {
     }
 
-    public static void sendExpansionNotification(PlayerList playerList, Object... translatableArgs) {
+    public static void sendExpansionNotification(PlayerList playerList, String translationKey, ValidatedColor textColor, Object... translatableArgs) {
         switch (config.expansionNotification.location) {
             case CHAT, ACTION_BAR -> {
-                String translationKey = AdvancementBorder.config.expansionNotification.showAmountOfBlocks
-                        ? ".expand_detailed"
-                        : ".expand_basic";
-
-                int color = config.expansionNotification.textColor.get().argb();
                 playerList.broadcastSystemMessage(
                         Component.translatable(
                             AdvancementBorder.MOD_ID + translationKey,
-                            translatableArgs).withColor(color),
+                            translatableArgs).withColor(textColor.get().argb()),
                         config.expansionNotification.location.equals(AdvancementBorderConfig.NotificationLocation.ACTION_BAR));
             }
             case DISABLED -> {}

@@ -15,6 +15,7 @@ import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
+import me.fzzyhmstrs.fzzy_config.validation.misc.ValidatedColor;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementType;
 import net.minecraft.advancements.DisplayInfo;
@@ -127,11 +128,19 @@ public abstract class PlayerAdvancementsMixin {
                                                 @Share("announceChat") LocalBooleanRef announceChatRef,
                                                 @Share("expansionAmount") LocalRef<Map<Identifier, Double>> expansionAmountRef) {
         if (announceChatRef.get()) {
+            String translationKey = AdvancementBorder.config.expansionNotification.showAmountOfBlocks
+                    ? ".expand_detailed"
+                    : ".expand_basic";
+
+            ValidatedColor textColor = AdvancementBorder.config.expansionNotification.textColor;
+
             expansionAmountRef.get().forEach((dimensionIdentifier, increaseAmount) -> {
                 // Don't send any message if the border didn't change
                 if (increaseAmount != 0) {
                     AdvancementBorder.sendExpansionNotification(
                             this.playerList,
+                            translationKey,
+                            textColor,
                             dimensionIdentifier.toString(),
                             increaseAmount);
                 }
