@@ -91,6 +91,12 @@ public final class AdvancementBorderConfig extends Config {
         public static class DimensionConfig implements Walkable {
             @Comment("How much to increase the world border in this dimension")
             public IncreaseAmountConfig increaseAmount = new IncreaseAmountConfig();
+
+            public static DimensionConfig getForDimension(Identifier identifier) {
+                return AdvancementBorder.config.dimensions.configured.getOrDefault(
+                        identifier,
+                        AdvancementBorder.config.dimensions.fallback);
+            }
         }
 
         public static class IncreaseAmountConfig implements Walkable {

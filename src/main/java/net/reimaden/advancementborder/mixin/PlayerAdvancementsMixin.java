@@ -1,5 +1,7 @@
 package net.reimaden.advancementborder.mixin;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.spongepowered.asm.mixin.Final;
@@ -11,10 +13,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalDoubleRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.AdvancementType;
 import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -42,8 +46,11 @@ public abstract class PlayerAdvancementsMixin {
                     target = "Lnet/minecraft/advancements/AdvancementHolder;value()Lnet/minecraft/advancements/Advancement;"
             )
     )
-    private void advancementborder$expand(AdvancementHolder holder, String criterion, CallbackInfoReturnable<Boolean> cir,
-                                          @Share("announceChat") LocalBooleanRef announceChat, @Share("increase") LocalDoubleRef doubleRef) {
+    private void advancementborder$expand(AdvancementHolder holder,
+                                          String criterion,
+                                          CallbackInfoReturnable<Boolean> cir,
+                                          @Share("announceChat") LocalBooleanRef announceChatRef,
+                                          @Share("expansionAmount") LocalRef<Map<Identifier, Double>> expansionAmountRef) {
         // A catch-all solution for "non-advancement" advancements
         // Excludes recipe, root, and technical advancements used by some data packs
         Optional<DisplayInfo> displayInfo = holder.value().display();
@@ -75,15 +82,20 @@ public abstract class PlayerAdvancementsMixin {
 
         if (!shouldExpand) return;
 
-        server.registries().compositeAccess().lookupOrThrow(Registries.DIMENSION).forEach(level -> {
-            ResourceKey<Level> dimension = level.dimension();
-            Identifier id = dimension.identifier();
+        AdvancementType advancementType = displayInfo.get().getType();
 
-            DimensionConfig config = AdvancementBorder.config.dimensions.configured.getOrDefault(
-                    id,
-                    AdvancementBorder.config.dimensions.fallback);
+        Map<Identifier, Double> expansionAmount = new HashMap<>();
 
-            double increase = switch (displayInfo.get().getType()) {
+        Registry<Level> levelRegistry = server.registryAccess().lookupOrThrow(Registries.DIMENSION);
+
+        for (ResourceKey<Level> levelKey : levelRegistry.registryKeySet()) {
+            Level level = server.getLevel(levelKey);
+
+            Identifier identifier = levelKey.identifier();
+
+            DimensionConfig config = DimensionConfig.getForDimension(identifier);
+
+            double increase = switch (advancementType) {
                 case TASK -> config.increaseAmount.task;
                 case GOAL -> config.increaseAmount.goal;
                 case CHALLENGE -> config.increaseAmount.challenge;
@@ -93,24 +105,37 @@ public abstract class PlayerAdvancementsMixin {
 
             // Ensure the world border doesn't go too small, crash the game, and break the world
             border.setSize(Math.max(1.0, border.getSize() + increase));
-        });
 
-        announceChat.set(true);
-        // doubleRef.set(increase);
+            expansionAmount.put(identifier, increase);
+        }
+
+        announceChatRef.set(true);
+        expansionAmountRef.set(expansionAmount);
     }
 
-    // @Inject(
-    //         method = "award",
-    //         at = @At(
-    //                 value = "INVOKE",
-    //                 target = "Ljava/util/Optional;ifPresent(Ljava/util/function/Consumer;)V",
-    //                 shift = At.Shift.AFTER
-    //         )
-    // )
-    // private void advancementborder$announceChat(AdvancementHolder holder, String criterion, CallbackInfoReturnable<Boolean> cir,
-    //                                             @Share("announceChat") LocalBooleanRef announceChat, @Share("increase") LocalDoubleRef doubleRef) {
-    //     if (announceChat.get()) {
-    //         AdvancementBorder.sendExpansionNotification(this.playerList, doubleRef.get());
-    //     }
-    // }
+    @Inject(
+            method = "award",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Ljava/util/Optional;ifPresent(Ljava/util/function/Consumer;)V",
+                    shift = At.Shift.AFTER
+            )
+    )
+    private void advancementborder$announceChat(AdvancementHolder holder,
+                                                String criterion,
+                                                CallbackInfoReturnable<Boolean> cir,
+                                                @Share("announceChat") LocalBooleanRef announceChatRef,
+                                                @Share("expansionAmount") LocalRef<Map<Identifier, Double>> expansionAmountRef) {
+        if (announceChatRef.get()) {
+            expansionAmountRef.get().forEach((dimensionIdentifier, increaseAmount) -> {
+                // Don't send any message if the border didn't change
+                if (increaseAmount != 0) {
+                    AdvancementBorder.sendExpansionNotification(
+                            this.playerList,
+                            dimensionIdentifier.toString(),
+                            increaseAmount);
+                }
+            });
+        }
+    }
 }

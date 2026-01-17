@@ -31,9 +31,10 @@ public final class AdvancementBorder implements ModInitializer {
 
                 int color = config.expansionNotification.textColor.get().argb();
                 playerList.broadcastSystemMessage(
-                        Component.translatable(AdvancementBorder.MOD_ID + translationKey, translatableArgs).withColor(color),
-                        config.expansionNotification.location.equals(AdvancementBorderConfig.NotificationLocation.ACTION_BAR)
-                );
+                        Component.translatable(
+                            AdvancementBorder.MOD_ID + translationKey,
+                            translatableArgs).withColor(color),
+                        config.expansionNotification.location.equals(AdvancementBorderConfig.NotificationLocation.ACTION_BAR));
             }
             case DISABLED -> {}
         }
