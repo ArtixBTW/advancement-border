@@ -1,32 +1,60 @@
 {
   "modmenu.descriptionTranslation.advancementborder": "Expands the world border based on completed advancements.",
-  "config.screen.advancementborder": "Advancement Border",
-  "config.advancementborder.option.increaseAmountTask": "Increase from Tasks",
-  "config.advancementborder.option.increaseAmountTask.comment.0": "How much the world border should expand with each task advancement",
-  "config.advancementborder.option.increaseAmountGoal": "Increase from Goals",
-  "config.advancementborder.option.increaseAmountGoal.comment.0": "How much the world border should expand with each goal advancement",
-  "config.advancementborder.option.increaseAmountChallenge": "Increase from Challenges",
-  "config.advancementborder.option.increaseAmountChallenge.comment.0": "How much the world border should expand with each challenge advancement",
-  "config.advancementborder.option.notificationStyle": "Notification Style",
-  "config.advancementborder.option.notificationStyle.comment.0": "Whether to send world border notifications to the chat, action bar, or not at all",
-  "config.advancementborder.option.detailedNotifications": "Detailed Notifications",
-  "config.advancementborder.option.detailedNotifications.comment.0": "Whether to display the amount of blocks the world border expands",
-  "config.advancementborder.option.notificationColor": "Notification Color",
-  "config.advancementborder.option.notificationColor.comment.0": "Color of world border notifications in hexadecimal",
-  "config.advancementborder.option.notificationColor.error": "Please use a valid 6-digit hex code in the format '#RRGGBB'",
-  "config.advancementborder.option.perPlayerAdvancements": "Per-Player Advancements",
-  "config.advancementborder.option.perPlayerAdvancements.comment.0": "Whether each player contributes separately instead of using a global list of advancements",
-  "config.advancementborder.option.advancementWhitelist": "Whitelist",
-  "config.advancementborder.option.advancementWhitelist.comment.0": "A list of advancements that should expand the world border",
-  "config.advancementborder.option.advancementWhitelist.comment.1": "Leave empty to allow all advancements to expand the world border",
-  "config.advancementborder.option.advancementWhitelist.entry": "Resource Location",
-  "config.advancementborder.option.advancementWhitelist.error": "The namespace and the path of a resource location should only contain the following symbols: Numbers, lowercase letters, underscores, hyphens, and dots! Paths can additionally contain forward slashes",
-  "config.advancementborder.option.invertList": "Invert List",
-  "config.advancementborder.option.invertList.comment.0": "Make the whitelist act as a blacklist, preventing the advancements in it from expanding the world border",
-  "config.advancementborder.option.worldBorderSetup": "World Border Setup",
-  "config.advancementborder.option.worldBorderSetup.automate": "Automatic Setup",
-  "config.advancementborder.option.worldBorderSetup.automate.comment.0": "Let Advancement Border handle setting up the world border for new worlds",
-  "config.advancementborder.option.worldBorderSetup.automate.comment.1": "This sets the size of the world border and centers it on the world spawn",
-  "config.advancementborder.option.worldBorderSetup.initialSize": "Initial Size",
-  "config.advancementborder.option.worldBorderSetup.initialSize.comment.0": "The initial size of the world border"
+
+  "advancementborder.server.advancements": "Advancements",
+  "advancementborder.server.advancements.desc": "Configuration of how to respond to advancements",
+
+  "advancementborder.server.expansionNotification": "Expansion Notification",
+  "advancementborder.server.expansionNotification.desc": "Expansion Notification Configuration",
+
+  "advancementborder.server.dimensions": "Dimensions",
+  "advancementborder.server.dimensions.desc": "Per-Dimension Configuration",
+
+  "advancementborder.enum.notification_location.CHAT": "Chat",
+  "advancementborder.enum.notification_location.CHAT.desc": "Text Chat",
+
+  "advancementborder.enum.notification_location.ACTION_BAR": "Action Bar",
+  "advancementborder.enum.notification_location.ACTION_BAR.desc": "The space just above the player's hotbar where text can be displayed. Some gameplay elements, such as beds, use this to give contextual hints to the player",
+
+  "advancementborder.enum.notification_location.DISABLED": "Disabled",
+  "advancementborder.enum.notification_location.DISABLED.desc": "Disable notifications entirely",
+
+  "advancementborder.config_type.advancements.perPlayer": "Per Player",
+  "advancementborder.config_type.advancements.perPlayer.desc": "Whether each player contributes separately instead of using a global list of advancements",
+
+  "advancementborder.config_type.advancements.blacklist": "Blacklist",
+  "advancementborder.config_type.advancements.blacklist.desc": "Advancements that should not expand the world border",
+
+  "advancementborder.config_type.blacklist.invert": "Invert",
+  "advancementborder.config_type.blacklist.invert.desc": "Whether the blacklist should act as a whitelist, allowing only the advancements in it to expand the world border",
+
+  "advancementborder.config_type.blacklist.advancements": "Advancements",
+  "advancementborder.config_type.blacklist.advancements.desc": "The advancements in the blacklist",
+
+  "advancementborder.config_type.expansion_notification.location": "Location",
+  "advancementborder.config_type.expansion_notification.location.desc": "Where to send notifications to",
+
+  "advancementborder.config_type.expansion_notification.showAmountOfBlocks": "Show Amount of Blocks",
+  "advancementborder.config_type.expansion_notification.showAmountOfBlocks.desc": "Whether to display the amount of blocks the world border expands in each notification",
+
+  "advancementborder.config_type.expansion_notification.textColor": "Text Color",
+  "advancementborder.config_type.expansion_notification.textColor.desc": "Text color of notifications",
+
+  "advancementborder.config_type.dimensions.fallback": "Fallback",
+  "advancementborder.config_type.dimensions.fallback.desc": "The config to use if a dimension is not explicitly configured",
+
+  "advancementborder.config_type.dimensions.configured": "Configured Dimensions",
+  "advancementborder.config_type.dimensions.configured.desc": "Explicitly configured dimensions",
+
+  "advancementborder.config_type.dimension.increaseAmount": "Increase Amount",
+  "advancementborder.config_type.dimension.increaseAmount.desc": "How much to increase the world border in this dimension",
+
+  "advancementborder.config_type.increase_amount.task": "Task",
+  "advancementborder.config_type.increase_amount.task.desc": "How much the world border should expand with each task advancement",
+
+  "advancementborder.config_type.increase_amount.goal": "Goal",
+  "advancementborder.config_type.increase_amount.goal.desc": "How much the world border should expand with each goal advancement",
+
+  "advancementborder.config_type.increase_amount.challenge": "Challenge",
+  "advancementborder.config_type.increase_amount.challenge.desc": "How much the world border should expand with each challenge advancement"
 }
